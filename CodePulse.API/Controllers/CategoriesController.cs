@@ -1,5 +1,4 @@
-﻿using CodePulse.API.Data;
-using CodePulse.API.Models.Domain;
+﻿using CodePulse.API.Models.Domain;
 using CodePulse.API.Models.DTO;
 using CodePulse.API.Repositories.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +34,7 @@ namespace CodePulse.API.Controllers
             {
                 Id = category.Id,
                 Name = category.Name,
-                UrlHandle =  category.UrlHandle
+                UrlHandle = category.UrlHandle
             };
 
             return Ok(response);
@@ -54,7 +53,7 @@ namespace CodePulse.API.Controllers
                 response.Add(new CategoryDto
                 {
                     Id = category.Id,
-                    Name = category.Name,   
+                    Name = category.Name,
                     UrlHandle = category.UrlHandle
                 });
             }
@@ -80,6 +79,38 @@ namespace CodePulse.API.Controllers
                 Name = existingCategory.Name,
                 UrlHandle = existingCategory.UrlHandle
             };
+
+            return Ok(response);
+        }
+
+        // PUT: https://localhost:44369/api/categories
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryRequestDto request)
+        {
+            // Convert DTO to Domain model
+            var category = new Category()
+            {
+                Id = id,
+                Name = request.Name,
+                UrlHandle = request.UrlHandle
+            };
+
+            category = await categoryRepository.UpdateAsync(category);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            //Convert Domain model to DTO
+
+            var response = new CategoryDto()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UrlHandle = category.UrlHandle
+            }; 
 
             return Ok(response);
         }
